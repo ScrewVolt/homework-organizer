@@ -43,6 +43,12 @@ let mode = "work";
 let timeLeft = 25 * 60;
 let isRunning = false;
 
+function applyDarkModeSetting() {
+  const darkMode = localStorage.getItem("darkmode") === "true";
+  document.body.classList.toggle("darkmode", darkMode);
+}
+applyDarkModeSetting();
+
 const durations = {
   work: 25 * 60,
   shortBreak: 5 * 60,

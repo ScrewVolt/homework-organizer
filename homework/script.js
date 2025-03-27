@@ -17,6 +17,21 @@ const db = getFirestore(app);
 const auth = getAuth(app);
 let currentUser = null;
 
+// 🌙 Apply and handle global dark mode
+function applyDarkModeSetting() {
+  const darkMode = localStorage.getItem("darkmode") === "true";
+  document.body.classList.toggle("darkmode", darkMode);
+}
+applyDarkModeSetting();
+
+const toggleDarkBtn = document.getElementById("toggle-darkmode-btn");
+if (toggleDarkBtn) {
+  toggleDarkBtn.addEventListener("click", () => {
+    const enabled = document.body.classList.toggle("darkmode");
+    localStorage.setItem("darkmode", enabled);
+  });
+}
+
 const form = document.getElementById("task-form");
 const todoCol = document.getElementById("todo");
 const inProgressCol = document.getElementById("in-progress");

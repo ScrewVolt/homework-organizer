@@ -22,11 +22,31 @@
 
     const loginModal = document.getElementById('login-modal');
     const welcomeBar = document.getElementById('welcome-bar');
+    const userDropdown = document.getElementById('user-dropdown');
     const usernameEl = document.getElementById('user-name');
     const authMsg = document.getElementById('auth-msg');
     const emailInput = document.getElementById('username-input');
     const passwordInput = document.getElementById('password-input');
+    const accountModal = document.getElementById('account-modal');
+    const closeAccount = document.getElementById('close-account');
+    const toggleDarkBtn = document.getElementById("toggle-darkmode-btn");
+
     let isLogin = true;
+
+    // ✅ Load saved dark mode on page load
+    function applyDarkModeSetting() {
+      const isDark = localStorage.getItem("darkmode") === "true";
+      document.body.classList.toggle("darkmode", isDark);
+    }
+    applyDarkModeSetting();
+
+    // ✅ Handle dark mode toggle
+    if (toggleDarkBtn) {
+      toggleDarkBtn.addEventListener("click", () => {
+        const enabled = document.body.classList.toggle("darkmode");
+        localStorage.setItem("darkmode", enabled);
+      });
+    }
 
     document.getElementById('auth-btn').addEventListener('click', () => {
       const email = emailInput.value.trim();
@@ -50,6 +70,11 @@
 
     document.getElementById('logout-btn').addEventListener('click', () => {
       signOut(auth);
+      accountModal.classList.add('hidden');
+    });
+
+    document.getElementById('go-premium-btn').addEventListener('click', () => {
+      alert("Redirecting to premium upgrade... (integrate Stripe here)");
     });
 
     window.toggleAuthMode = () => {
@@ -64,7 +89,7 @@
       if (user) {
         usernameEl.textContent = user.email;
         loginModal.style.display = 'none';
-        welcomeBar.style.display = 'block';
+        welcomeBar.style.display = 'flex';
         localStorage.setItem('currentUser', user.uid);
       } else {
         loginModal.style.display = 'flex';
@@ -72,6 +97,11 @@
         localStorage.removeItem('currentUser');
       }
     });
+
+    userDropdown.addEventListener('click', () => {
+      accountModal.classList.toggle('show');
+    });
+    closeAccount.addEventListener('click', () => accountModal.classList.remove('show'));
   </script>
   <style>
     body {
@@ -79,6 +109,11 @@
       background: #f0f4f8;
       text-align: center;
       padding: 2rem;
+      transition: background 0.3s;
+    }
+    body.darkmode {
+      background: #1e1e1e;
+      color: #fff;
     }
     h1 {
       margin-bottom: 2rem;
@@ -99,20 +134,52 @@
       background: #dbeafe;
       transform: scale(1.05);
     }
+    body.darkmode .tool-card {
+      background: #2a2a2a;
+      color: white;
+    }
     #welcome-bar {
       margin-bottom: 2rem;
       font-size: 1.1rem;
       font-weight: bold;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
     }
-    #logout-btn {
-      background: #ef4444;
+    #user-dropdown {
+      background: #3b82f6;
       color: white;
       border: none;
       padding: 0.5rem 1rem;
       border-radius: 6px;
       cursor: pointer;
       font-size: 1rem;
-      margin-left: 1rem;
+    }
+    #account-modal {
+      position: absolute;
+      top: 60px;
+      right: 20px;
+      background: white;
+      padding: 1rem;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.2);
+      display: none;
+    }
+    #account-modal.show {
+      display: block;
+    }
+    #account-modal button {
+      display: block;
+      margin: 0.5rem 0;
+      padding: 0.5rem;
+      width: 100%;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 1rem;
+    }
+    #account-modal button:hover {
+      background: #dbeafe;
     }
     #login-modal {
       position: fixed;
@@ -171,8 +238,15 @@
   </div>
 
   <div id="welcome-bar" style="display:none;">
-    Welcome, <span id="user-name"></span>!
+    <div>Welcome, <span id="user-name"></span>!</div>
+    <button id="user-dropdown">☰</button>
+  </div>
+
+  <div id="account-modal" class="hidden">
     <button id="logout-btn">Log Out</button>
+    <button id="go-premium-btn">Go Premium</button>
+    <button id="toggle-darkmode-btn">Toggle Dark Mode</button>
+    <button id="close-account">Close</button>
   </div>
 
   <h1>📘 My Productivity Tools</h1>

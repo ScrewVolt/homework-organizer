@@ -229,4 +229,30 @@ body {
       margin: 0.5rem 0;
     }
   }
-    
+  
+  body.darkmode {
+    background: #1e1e1e;
+    color: #f0f0f0;
+  }
+  
+  body.darkmode .task,
+  body.darkmode .column,
+  body.darkmode .tool-card {
+    background: #2a2a2a !important;
+    color: white;
+    border-color: #444;
+  }
+  
+  body.darkmode input,
+  body.darkmode button,
+  body.darkmode select,
+  body.darkmode textarea {
+    background-color: #333;
+    color: white;
+    border: 1px solid #555;
+  }
+  
+  body.darkmode .tag {
+    color: white;
+  }
+  
