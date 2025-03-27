@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Homework Organizer</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <h1>📚 Homework Organizer</h1>
+
+  <form id="task-form">
+    <input type="text" id="title" placeholder="Task Title" required>
+    <input type="text" id="subject" placeholder="Subject" required>
+    <input type="date" id="due" required>
+    <button type="submit">Add Task</button>
+  </form>
+
+  <div class="kanban">
+    <div class="column" id="todo">
+      <h2>To Do</h2>
+    </div>
+    <div class="column" id="in-progress">
+      <h2>In Progress</h2>
+    </div>
+    <div class="column" id="done">
+      <h2>Done</h2>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

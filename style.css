@@ -1,0 +1,50 @@
+body {
+    font-family: sans-serif;
+    background: #f9f9f9;
+    padding: 2rem;
+    margin: 0;
+  }
+  
+  h1 {
+    text-align: center;
+    margin-bottom: 1rem;
+  }
+  
+  form {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+  }
+  
+  input, button {
+    padding: 0.5rem;
+    font-size: 1rem;
+  }
+  
+  .kanban {
+    display: flex;
+    justify-content: space-around;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+  
+  .column {
+    width: 30%;
+    min-width: 250px;
+    background: white;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    padding: 1rem;
+    min-height: 300px;
+  }
+  
+  .task {
+    background: #e0e0ff;
+    margin: 0.5rem 0;
+    padding: 0.5rem;
+    border-radius: 5px;
+    cursor: grab;
+  }
+  
