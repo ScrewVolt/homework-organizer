@@ -3,6 +3,76 @@
 <head>
   <meta charset="UTF-8" />
   <title>Student Productivity Suite</title>
+  <script type="module">
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.10.0/firebase-app.js';
+    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.10.0/firebase-auth.js';
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDhHoP9RIyNBBx_2Pdc_uYMjinfdNe0rWI",
+      authDomain: "productivitysuite-afe76.firebaseapp.com",
+      projectId: "productivitysuite-afe76",
+      storageBucket: "productivitysuite-afe76.firebasestorage.app",
+      messagingSenderId: "213747265695",
+      appId: "1:213747265695:web:5092bca79d1f584426f2aa",
+      measurementId: "G-JY20JJ4S1R"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    const loginModal = document.getElementById('login-modal');
+    const welcomeBar = document.getElementById('welcome-bar');
+    const usernameEl = document.getElementById('user-name');
+    const authMsg = document.getElementById('auth-msg');
+    const emailInput = document.getElementById('username-input');
+    const passwordInput = document.getElementById('password-input');
+    let isLogin = true;
+
+    document.getElementById('auth-btn').addEventListener('click', () => {
+      const email = emailInput.value.trim();
+      const password = passwordInput.value.trim();
+      authMsg.textContent = '';
+      if (!email || !password) {
+        authMsg.textContent = 'Please fill in both fields.';
+        return;
+      }
+
+      if (isLogin) {
+        signInWithEmailAndPassword(auth, email, password)
+          .then(() => console.log('Logged in'))
+          .catch(err => authMsg.textContent = err.message);
+      } else {
+        createUserWithEmailAndPassword(auth, email, password)
+          .then(() => console.log('Registered'))
+          .catch(err => authMsg.textContent = err.message);
+      }
+    });
+
+    document.getElementById('logout-btn').addEventListener('click', () => {
+      signOut(auth);
+    });
+
+    window.toggleAuthMode = () => {
+      isLogin = !isLogin;
+      document.getElementById('modal-title').textContent = isLogin ? 'Login' : 'Register';
+      document.getElementById('auth-btn').textContent = isLogin ? 'Login' : 'Register';
+      document.querySelector('.toggle-link').textContent = isLogin ? "Don't have an account? Register" : 'Already have an account? Login';
+      authMsg.textContent = '';
+    };
+
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        usernameEl.textContent = user.email;
+        loginModal.style.display = 'none';
+        welcomeBar.style.display = 'block';
+        localStorage.setItem('currentUser', user.uid);
+      } else {
+        loginModal.style.display = 'flex';
+        welcomeBar.style.display = 'none';
+        localStorage.removeItem('currentUser');
+      }
+    });
+  </script>
   <style>
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -91,10 +161,10 @@
   <div id="login-modal">
     <div class="modal-content">
       <h2 id="modal-title">Login</h2>
-      <input type="text" id="username-input" placeholder="Username" />
+      <input type="text" id="username-input" placeholder="Email" />
       <input type="password" id="password-input" placeholder="Password" />
       <br>
-      <button onclick="handleAuth()" id="auth-btn">Login</button>
+      <button id="auth-btn">Login</button>
       <span class="toggle-link" onclick="toggleAuthMode()">Don't have an account? Register</span>
       <p id="auth-msg" style="color:red;"></p>
     </div>
@@ -102,7 +172,7 @@
 
   <div id="welcome-bar" style="display:none;">
     Welcome, <span id="user-name"></span>!
-    <button id="logout-btn" onclick="logoutUser()">Log Out</button>
+    <button id="logout-btn">Log Out</button>
   </div>
 
   <h1>📘 My Productivity Tools</h1>
@@ -114,68 +184,5 @@
   <a class="tool-card" href="pomodoro/index.html">
     ⏱️ Pomodoro Timer
   </a>
-
-  <script>
-    let isLogin = true;
-
-    function toggleAuthMode() {
-      isLogin = !isLogin;
-      document.getElementById('modal-title').textContent = isLogin ? "Login" : "Register";
-      document.getElementById('auth-btn').textContent = isLogin ? "Login" : "Register";
-      document.querySelector('.toggle-link').textContent = isLogin ? "Don't have an account? Register" : "Already have an account? Login";
-      document.getElementById('auth-msg').textContent = "";
-    }
-
-    async function handleAuth() {
-      const username = document.getElementById('username-input').value.trim();
-      const password = document.getElementById('password-input').value.trim();
-      const msgEl = document.getElementById('auth-msg');
-      if (!username || !password) {
-        msgEl.textContent = "Please fill in both fields.";
-        return;
-      }
-      const hash = await hashPassword(password);
-      const users = JSON.parse(localStorage.getItem('users') || '{}');
-
-      if (isLogin) {
-        if (!users[username] || users[username].password !== hash) {
-          msgEl.textContent = "Invalid username or password.";
-          return;
-        }
-      } else {
-        if (users[username]) {
-          msgEl.textContent = "Username already exists.";
-          return;
-        }
-        users[username] = { password: hash };
-        localStorage.setItem('users', JSON.stringify(users));
-      }
-
-      localStorage.setItem('currentUser', username);
-      document.getElementById('user-name').textContent = username;
-      document.getElementById('login-modal').style.display = 'none';
-      document.getElementById('welcome-bar').style.display = 'block';
-    }
-
-    function logoutUser() {
-      localStorage.removeItem('currentUser');
-      location.reload();
-    }
-
-    async function hashPassword(password) {
-      const enc = new TextEncoder().encode(password);
-      const buf = await crypto.subtle.digest("SHA-256", enc);
-      return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
-    }
-
-    window.onload = function() {
-      const storedUser = localStorage.getItem('currentUser');
-      if (storedUser) {
-        document.getElementById('user-name').textContent = storedUser;
-        document.getElementById('login-modal').style.display = 'none';
-        document.getElementById('welcome-bar').style.display = 'block';
-      }
-    }
-  </script>
 </body>
 </html>

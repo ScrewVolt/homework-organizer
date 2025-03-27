@@ -1,3 +1,20 @@
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-app.js";
+import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyDhHoP9RIyNBBx_2Pdc_uYMjinfdNe0rWI",
+  authDomain: "productivitysuite-afe76.firebaseapp.com",
+  projectId: "productivitysuite-afe76",
+  storageBucket: "productivitysuite-afe76.firebasestorage.app",
+  messagingSenderId: "213747265695",
+  appId: "1:213747265695:web:5092bca79d1f584426f2aa",
+  measurementId: "G-JY20JJ4S1R"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const currentUser = localStorage.getItem("currentUser") || "guest";
+
 const timeDisplay = document.getElementById("time");
 const startBtn = document.getElementById("start");
 const pauseBtn = document.getElementById("pause");
@@ -18,8 +35,6 @@ const focusRating = document.getElementById("focus-rating");
 const stars = document.querySelectorAll("#stars span");
 const badgeContainer = document.getElementById("badges");
 const focusAverageDisplay = document.getElementById("focus-average");
-
-const currentUser = localStorage.getItem("currentUser") || "default";
 
 let interval;
 let mode = "work";
@@ -75,21 +90,21 @@ function switchMode(newMode) {
   document.querySelector(`[data-mode="${mode}"]`).classList.add("active");
 }
 
-function handleSessionEnd() {
+async function handleSessionEnd() {
   if (mode === "work") {
-    incrementTodaySession();
-    const total = getTodaySessionCount();
+    await incrementTodaySession();
+    const total = await getTodaySessionCount();
     sessionCount.textContent = total;
     updateGoalProgress();
     showFocusRating();
     checkForBadges(total);
-    updateFocusAverage();
+    await updateFocusAverage();
     mode = total % 4 === 0 ? "longBreak" : "shortBreak";
   } else {
     mode = "work";
   }
   switchMode(mode);
-  updateLogDropdown();
+  await updateLogDropdown();
 
   if (autoRestartCheckbox.checked) {
     startTimer();
@@ -111,26 +126,25 @@ function getTodayKey() {
   return today.toISOString().split('T')[0];
 }
 
-function getStorageKey(base) {
-  return `${base}_${currentUser}`;
-}
-
-function incrementTodaySession() {
+async function incrementTodaySession() {
   const key = getTodayKey();
-  const logKey = getStorageKey("pomodoroLog");
-  const log = JSON.parse(localStorage.getItem(logKey) || "{}");
-  log[key] = (log[key] || 0) + 1;
-  localStorage.setItem(logKey, JSON.stringify(log));
+  const docRef = doc(db, "pomodoroLog", currentUser);
+  const docSnap = await getDoc(docRef);
+  let data = docSnap.exists() ? docSnap.data() : {};
+  data[key] = (data[key] || 0) + 1;
+  await setDoc(docRef, data);
 }
 
-function getTodaySessionCount() {
+async function getTodaySessionCount() {
   const key = getTodayKey();
-  const log = JSON.parse(localStorage.getItem(getStorageKey("pomodoroLog")) || "{}");
-  return log[key] || 0;
+  const docSnap = await getDoc(doc(db, "pomodoroLog", currentUser));
+  const data = docSnap.exists() ? docSnap.data() : {};
+  return data[key] || 0;
 }
 
-function updateLogDropdown() {
-  const log = JSON.parse(localStorage.getItem(getStorageKey("pomodoroLog")) || "{}");
+async function updateLogDropdown() {
+  const docSnap = await getDoc(doc(db, "pomodoroLog", currentUser));
+  const log = docSnap.exists() ? docSnap.data() : {};
   logDropdown.innerHTML = "";
   Object.keys(log).sort((a, b) => new Date(b) - new Date(a)).forEach(date => {
     const entry = document.createElement("option");
@@ -141,7 +155,7 @@ function updateLogDropdown() {
 
 function updateGoalProgress() {
   const goal = parseInt(goalInput.value, 10) || 0;
-  const current = getTodaySessionCount();
+  const current = parseInt(sessionCount.textContent) || 0;
   const percent = Math.min((current / goal) * 100, 100);
   progressFill.style.width = `${percent}%`;
 }
@@ -159,18 +173,20 @@ stars.forEach(star => {
   });
 });
 
-function saveFocusRating(rating) {
+async function saveFocusRating(rating) {
   const key = getTodayKey();
-  const ratingsKey = getStorageKey("focusRatings");
-  const ratings = JSON.parse(localStorage.getItem(ratingsKey) || "{}");
+  const docRef = doc(db, "focusRatings", currentUser);
+  const docSnap = await getDoc(docRef);
+  let ratings = docSnap.exists() ? docSnap.data() : {};
   if (!ratings[key]) ratings[key] = [];
   ratings[key].push(Number(rating));
-  localStorage.setItem(ratingsKey, JSON.stringify(ratings));
+  await setDoc(docRef, ratings);
 }
 
-function updateFocusAverage() {
+async function updateFocusAverage() {
   const key = getTodayKey();
-  const ratings = JSON.parse(localStorage.getItem(getStorageKey("focusRatings")) || "{}");
+  const docSnap = await getDoc(doc(db, "focusRatings", currentUser));
+  const ratings = docSnap.exists() ? docSnap.data() : {};
   const todayRatings = ratings[key] || [];
   if (todayRatings.length === 0) {
     focusAverageDisplay.textContent = "-";
@@ -214,9 +230,11 @@ if ("Notification" in window && Notification.permission !== "granted") {
   Notification.requestPermission();
 }
 
-updateDisplay();
-sessionCount.textContent = getTodaySessionCount();
-updateGoalProgress();
-updateLogDropdown();
-updateFocusAverage();
-checkForBadges(getTodaySessionCount());
+(async () => {
+  updateDisplay();
+  sessionCount.textContent = await getTodaySessionCount();
+  updateGoalProgress();
+  await updateLogDropdown();
+  await updateFocusAverage();
+  checkForBadges(await getTodaySessionCount());
+})();
