@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pomodoro Study Timer</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="container">
+    <h1>⏱️ Pomodoro Study Timer</h1>
+
+    <div class="description">
+      <p>This tool helps you stay focused using the Pomodoro technique: 25 minutes of deep work followed by a short break. Track your sessions, rate your focus, and earn achievement badges along the way!</p>
+    </div>
+
+    <div class="timer-mode">
+      <button data-mode="work" class="mode-btn active">Pomodoro</button>
+      <button data-mode="shortBreak" class="mode-btn">Short Break</button>
+      <button data-mode="longBreak" class="mode-btn">Long Break</button>
+    </div>
+
+    <div class="timer-display" id="time">25:00</div>
+
+    <div class="controls">
+      <button id="start">▶️ Start</button>
+      <button id="pause">⏸️ Pause</button>
+      <button id="reset">🔄 Reset</button>
+    </div>
+
+    <p>✅ Pomodoros Completed: <span id="session-count">0</span></p>
+
+    <label for="session-log">📖 Session Log:</label>
+    <select id="session-log"></select>
+
+    <div class="daily-goal">
+      <h3>🎯 Daily Goal</h3>
+      <label for="goal-input">Set Goal: </label>
+      <input type="number" id="goal-input" min="1" value="6" />
+      <div class="progress-bar">
+        <div id="progress-fill"></div>
+      </div>
+    </div>
+
+    <div class="focus-rating hidden" id="focus-rating">
+      <h3>🟡 Rate Your Focus</h3>
+      <div id="stars">
+        <span data-rating="1" title="Very distracted">⭐</span>
+        <span data-rating="2" title="Somewhat distracted">⭐</span>
+        <span data-rating="3" title="Average focus">⭐</span>
+        <span data-rating="4" title="Mostly focused">⭐</span>
+        <span data-rating="5" title="Super focused">⭐</span>
+      </div>
+    </div>
+
+    <div class="badge-section">
+      <h3>🏅 Achievements</h3>
+      <div id="badges"></div>
+    </div>
+
+    <div class="focus-summary">
+      <h3>📊 Today's Average Focus</h3>
+      <p id="focus-average">-</p>
+    </div>
+
+    <hr />
+
+    <div class="focus-panel">
+      <h3>🎯 Task Focus</h3>
+      <input type="text" id="focus-task" placeholder="What are you working on?" />
+    </div>
+
+    <div class="checklist">
+      <h3>✅ Mini Checklist</h3>
+      <ul id="checklist"></ul>
+      <input type="text" id="new-check" placeholder="Add item..." />
+      <button id="add-check">➕</button>
+    </div>
+
+    <div class="options">
+      <label><input type="checkbox" id="auto-restart" /> 🔁 Auto-restart sessions</label>
+    </div>
+  </div>
+
+  <div class="navigation">
+    <a href="../main.html">🏠 Back to Main Page</a> |
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

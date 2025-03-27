@@ -1,0 +1,200 @@
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #f4f6f9;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 2rem;
+    margin: 0;
+    color: #1f2937;
+  }
+  
+  .container {
+    background: #ffffff;
+    padding: 2rem;
+    border-radius: 16px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.06);
+    max-width: 600px;
+    width: 100%;
+  }
+  
+  h1 {
+    text-align: center;
+    margin-bottom: 1rem;
+    font-size: 2rem;
+    color: #111827;
+  }
+  
+  .description {
+    font-size: 1rem;
+    background: #e0f2fe;
+    padding: 1rem;
+    border-radius: 12px;
+    margin-bottom: 1.5rem;
+    color: #0f172a;
+  }
+  
+  .timer-mode {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  .mode-btn {
+    padding: 0.5rem 1rem;
+    border: 1px solid #cbd5e1;
+    background: #f1f5f9;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  
+  .mode-btn.active {
+    background: #3b82f6;
+    color: white;
+    border-color: #2563eb;
+  }
+  
+  .timer-display {
+    font-size: 4rem;
+    margin: 1rem 0;
+    font-weight: bold;
+    text-align: center;
+    color: #1e293b;
+  }
+  
+  .controls {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+  
+  .controls button {
+    padding: 0.5rem 1.2rem;
+    font-size: 1rem;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  
+  #start { background: #22c55e; color: white; }
+  #pause { background: #facc15; color: black; }
+  #reset { background: #ef4444; color: white; }
+  
+  .daily-goal,
+  .focus-panel,
+  .checklist,
+  .options,
+  .badge-section,
+  .focus-summary {
+    margin-top: 1.75rem;
+  }
+  
+  label {
+    font-weight: 500;
+    color: #334155;
+  }
+  
+  input[type="text"],
+  input[type="number"] {
+    width: 100%;
+    padding: 0.5rem;
+    border-radius: 6px;
+    border: 1px solid #d1d5db;
+    margin-top: 0.5rem;
+    font-size: 1rem;
+  }
+  
+  .progress-bar {
+    background: #e2e8f0;
+    height: 20px;
+    width: 100%;
+    border-radius: 6px;
+    overflow: hidden;
+    margin-top: 0.5rem;
+  }
+  
+  #progress-fill {
+    height: 100%;
+    width: 0%;
+    background-color: #10b981;
+    transition: width 0.3s ease-in-out;
+  }
+  
+  #checklist {
+    list-style: none;
+    padding: 0;
+    margin-top: 0.5rem;
+  }
+  
+  #checklist li {
+    background: #f9fafb;
+    border: 1px solid #d1d5db;
+    padding: 0.5rem 0.75rem;
+    border-radius: 6px;
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  
+  #checklist li input[type="checkbox"] {
+    margin-right: 0.5rem;
+  }
+  
+  .focus-rating {
+    margin-top: 1.5rem;
+    text-align: center;
+  }
+  
+  #stars span {
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 0 4px;
+    transition: transform 0.2s, color 0.2s;
+  }
+  
+  #stars span:hover {
+    transform: scale(1.3);
+    color: #facc15;
+  }
+  
+  .focus-rating.hidden {
+    display: none;
+  }
+  
+  #badges span {
+    background: #fde68a;
+    padding: 0.3rem 0.6rem;
+    border-radius: 5px;
+    font-size: 0.85rem;
+    margin-right: 0.3rem;
+    display: inline-block;
+    font-weight: 600;
+    color: #92400e;
+  }
+  
+  .focus-summary p {
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: #2563eb;
+  }
+  
+  .navigation {
+    margin-top: 2rem;
+    text-align: center;
+    font-size: 0.95rem;
+  }
+  
+  .navigation a {
+    color: #3b82f6;
+    text-decoration: none;
+    margin: 0 0.5rem;
+  }
+  
+  .navigation a:hover {
+    text-decoration: underline;
+  }
