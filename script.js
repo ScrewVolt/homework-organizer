@@ -16,21 +16,46 @@ form.addEventListener("submit", (e) => {
   form.reset();
 });
 
-// Create task element
 function createTaskElement(title, subject, due) {
-  const task = document.createElement("div");
-  task.classList.add("task");
-  task.draggable = true;
-  task.textContent = `${title} | ${subject} | Due: ${due}`;
+    const task = document.createElement("div");
+    task.classList.add("task");
+    task.draggable = true;
+  
+    // Create task content
+    task.innerHTML = `
+      <div class="task-info">
+        <strong>${title}</strong><br>
+        <span class="tag">${subject}</span><br>
+        <small>Due: ${due}</small>
+      </div>
+      <button class="delete-btn">❌</button>
+    `;
 
-  task.addEventListener("dragstart", (e) => {
-    e.dataTransfer.setData("text/plain", task.outerHTML);
-    task.remove();
-    saveTasks();
-  });
+    // Color-code subjects
+    const tag = task.querySelector(".tag");
+    if (subject.toLowerCase().includes("math")) tag.style.backgroundColor = "#3b82f6";
+    else if (subject.toLowerCase().includes("english")) tag.style.backgroundColor = "#22c55e";
+    else if (subject.toLowerCase().includes("science")) tag.style.backgroundColor = "#f97316";
+    else if (subject.toLowerCase().includes("history")) tag.style.backgroundColor = "#a855f7";
+    else tag.style.backgroundColor = "#6b7280"; // default gray
 
-  return task;
-}
+  
+    // Drag functionality
+    task.addEventListener("dragstart", (e) => {
+      e.dataTransfer.setData("text/plain", task.outerHTML);
+      task.remove();
+      saveTasks();
+    });
+  
+    // Delete functionality
+    task.querySelector(".delete-btn").addEventListener("click", () => {
+      task.remove();
+      saveTasks();
+    });
+  
+    return task;
+  }
+  
 
 // Allow columns to accept drops
 [...document.querySelectorAll(".column")].forEach(col => {
