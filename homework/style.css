@@ -156,3 +156,50 @@ input, button {
 .hidden {
   display: none;
 }
+.main-header {
+  background: #1f2937;
+  padding: 1rem 2rem;
+  text-align: center;
+  margin-bottom: 2rem;
+  border-radius: 8px;
+}
+
+.main-header nav a {
+  color: #f9fafb;
+  text-decoration: none;
+  margin: 0 1rem;
+  font-weight: 500;
+  font-size: 1rem;
+}
+
+.main-header nav a:hover {
+  text-decoration: underline;
+}
+@media (max-width: 768px) {
+  .kanban {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .column {
+    width: 90% !important;
+  }
+
+  .controls,
+  .timer-mode,
+  form,
+  .top-bar {
+    flex-direction: column;
+    gap: 0.75rem;
+    align-items: stretch;
+  }
+
+  input, button {
+    width: 100%;
+  }
+
+  .main-header nav a {
+    display: block;
+    margin: 0.5rem 0;
+  }
+}
