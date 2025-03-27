@@ -19,6 +19,8 @@ const stars = document.querySelectorAll("#stars span");
 const badgeContainer = document.getElementById("badges");
 const focusAverageDisplay = document.getElementById("focus-average");
 
+const currentUser = localStorage.getItem("currentUser") || "default";
+
 let interval;
 let mode = "work";
 let timeLeft = 25 * 60;
@@ -109,21 +111,26 @@ function getTodayKey() {
   return today.toISOString().split('T')[0];
 }
 
+function getStorageKey(base) {
+  return `${base}_${currentUser}`;
+}
+
 function incrementTodaySession() {
   const key = getTodayKey();
-  const log = JSON.parse(localStorage.getItem("pomodoroLog") || "{}");
+  const logKey = getStorageKey("pomodoroLog");
+  const log = JSON.parse(localStorage.getItem(logKey) || "{}");
   log[key] = (log[key] || 0) + 1;
-  localStorage.setItem("pomodoroLog", JSON.stringify(log));
+  localStorage.setItem(logKey, JSON.stringify(log));
 }
 
 function getTodaySessionCount() {
   const key = getTodayKey();
-  const log = JSON.parse(localStorage.getItem("pomodoroLog") || "{}");
+  const log = JSON.parse(localStorage.getItem(getStorageKey("pomodoroLog")) || "{}");
   return log[key] || 0;
 }
 
 function updateLogDropdown() {
-  const log = JSON.parse(localStorage.getItem("pomodoroLog") || "{}");
+  const log = JSON.parse(localStorage.getItem(getStorageKey("pomodoroLog")) || "{}");
   logDropdown.innerHTML = "";
   Object.keys(log).sort((a, b) => new Date(b) - new Date(a)).forEach(date => {
     const entry = document.createElement("option");
@@ -154,15 +161,16 @@ stars.forEach(star => {
 
 function saveFocusRating(rating) {
   const key = getTodayKey();
-  const ratings = JSON.parse(localStorage.getItem("focusRatings") || "{}");
+  const ratingsKey = getStorageKey("focusRatings");
+  const ratings = JSON.parse(localStorage.getItem(ratingsKey) || "{}");
   if (!ratings[key]) ratings[key] = [];
   ratings[key].push(Number(rating));
-  localStorage.setItem("focusRatings", JSON.stringify(ratings));
+  localStorage.setItem(ratingsKey, JSON.stringify(ratings));
 }
 
 function updateFocusAverage() {
   const key = getTodayKey();
-  const ratings = JSON.parse(localStorage.getItem("focusRatings") || "{}");
+  const ratings = JSON.parse(localStorage.getItem(getStorageKey("focusRatings")) || "{}");
   const todayRatings = ratings[key] || [];
   if (todayRatings.length === 0) {
     focusAverageDisplay.textContent = "-";

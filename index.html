@@ -5,7 +5,7 @@
   <title>Student Productivity Suite</title>
   <style>
     body {
-      font-family: sans-serif;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       background: #f0f4f8;
       text-align: center;
       padding: 2rem;
@@ -23,13 +23,88 @@
       text-decoration: none;
       color: black;
       width: 200px;
+      transition: transform 0.2s ease;
     }
     .tool-card:hover {
       background: #dbeafe;
+      transform: scale(1.05);
+    }
+    #welcome-bar {
+      margin-bottom: 2rem;
+      font-size: 1.1rem;
+      font-weight: bold;
+    }
+    #logout-btn {
+      background: #ef4444;
+      color: white;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 1rem;
+      margin-left: 1rem;
+    }
+    #login-modal {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.5);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 999;
+    }
+    .modal-content {
+      background: white;
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.2);
+      text-align: center;
+      width: 300px;
+    }
+    .modal-content input {
+      padding: 0.5rem;
+      width: 90%;
+      font-size: 1rem;
+      margin-bottom: 1rem;
+    }
+    .modal-content button {
+      padding: 0.5rem 1.5rem;
+      font-size: 1rem;
+      background: #3b82f6;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      margin-top: 0.5rem;
+    }
+    .toggle-link {
+      color: #2563eb;
+      cursor: pointer;
+      font-size: 0.9rem;
+      display: block;
+      margin-top: 0.75rem;
     }
   </style>
 </head>
 <body>
+  <div id="login-modal">
+    <div class="modal-content">
+      <h2 id="modal-title">Login</h2>
+      <input type="text" id="username-input" placeholder="Username" />
+      <input type="password" id="password-input" placeholder="Password" />
+      <br>
+      <button onclick="handleAuth()" id="auth-btn">Login</button>
+      <span class="toggle-link" onclick="toggleAuthMode()">Don't have an account? Register</span>
+      <p id="auth-msg" style="color:red;"></p>
+    </div>
+  </div>
+
+  <div id="welcome-bar" style="display:none;">
+    Welcome, <span id="user-name"></span>!
+    <button id="logout-btn" onclick="logoutUser()">Log Out</button>
+  </div>
+
   <h1>📘 My Productivity Tools</h1>
 
   <a class="tool-card" href="homework/index.html">
@@ -39,5 +114,68 @@
   <a class="tool-card" href="pomodoro/index.html">
     ⏱️ Pomodoro Timer
   </a>
+
+  <script>
+    let isLogin = true;
+
+    function toggleAuthMode() {
+      isLogin = !isLogin;
+      document.getElementById('modal-title').textContent = isLogin ? "Login" : "Register";
+      document.getElementById('auth-btn').textContent = isLogin ? "Login" : "Register";
+      document.querySelector('.toggle-link').textContent = isLogin ? "Don't have an account? Register" : "Already have an account? Login";
+      document.getElementById('auth-msg').textContent = "";
+    }
+
+    async function handleAuth() {
+      const username = document.getElementById('username-input').value.trim();
+      const password = document.getElementById('password-input').value.trim();
+      const msgEl = document.getElementById('auth-msg');
+      if (!username || !password) {
+        msgEl.textContent = "Please fill in both fields.";
+        return;
+      }
+      const hash = await hashPassword(password);
+      const users = JSON.parse(localStorage.getItem('users') || '{}');
+
+      if (isLogin) {
+        if (!users[username] || users[username].password !== hash) {
+          msgEl.textContent = "Invalid username or password.";
+          return;
+        }
+      } else {
+        if (users[username]) {
+          msgEl.textContent = "Username already exists.";
+          return;
+        }
+        users[username] = { password: hash };
+        localStorage.setItem('users', JSON.stringify(users));
+      }
+
+      localStorage.setItem('currentUser', username);
+      document.getElementById('user-name').textContent = username;
+      document.getElementById('login-modal').style.display = 'none';
+      document.getElementById('welcome-bar').style.display = 'block';
+    }
+
+    function logoutUser() {
+      localStorage.removeItem('currentUser');
+      location.reload();
+    }
+
+    async function hashPassword(password) {
+      const enc = new TextEncoder().encode(password);
+      const buf = await crypto.subtle.digest("SHA-256", enc);
+      return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
+    }
+
+    window.onload = function() {
+      const storedUser = localStorage.getItem('currentUser');
+      if (storedUser) {
+        document.getElementById('user-name').textContent = storedUser;
+        document.getElementById('login-modal').style.display = 'none';
+        document.getElementById('welcome-bar').style.display = 'block';
+      }
+    }
+  </script>
 </body>
 </html>

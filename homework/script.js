@@ -5,6 +5,8 @@ const doneCol = document.getElementById("done");
 const searchInput = document.getElementById("search");
 const exportBtn = document.getElementById("export-pdf");
 
+const currentUser = localStorage.getItem("currentUser") || "default";
+
 let taskBeingEdited = null;
 const editModal = document.getElementById("edit-modal");
 const editForm = document.getElementById("edit-form");
@@ -143,11 +145,11 @@ function saveTasks() {
     progress: inProgressCol.innerHTML,
     done: doneCol.innerHTML
   };
-  localStorage.setItem("tasks", JSON.stringify(data));
+  localStorage.setItem(`tasks_${currentUser}`, JSON.stringify(data));
 }
 
 function loadTasks() {
-  const data = JSON.parse(localStorage.getItem("tasks"));
+  const data = JSON.parse(localStorage.getItem(`tasks_${currentUser}`));
   if (!data) return;
   todoCol.innerHTML = data.todo;
   inProgressCol.innerHTML = data.progress;
