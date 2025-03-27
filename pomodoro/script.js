@@ -1,5 +1,6 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-app.js";
 import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-auth.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyDhHoP9RIyNBBx_2Pdc_uYMjinfdNe0rWI",
@@ -13,7 +14,8 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
-const currentUser = localStorage.getItem("currentUser") || "guest";
+const auth = getAuth(app);
+let currentUser = null;
 
 const timeDisplay = document.getElementById("time");
 const startBtn = document.getElementById("start");
@@ -127,6 +129,7 @@ function getTodayKey() {
 }
 
 async function incrementTodaySession() {
+  if (!currentUser) return;
   const key = getTodayKey();
   const docRef = doc(db, "pomodoroLog", currentUser);
   const docSnap = await getDoc(docRef);
@@ -136,6 +139,7 @@ async function incrementTodaySession() {
 }
 
 async function getTodaySessionCount() {
+  if (!currentUser) return 0;
   const key = getTodayKey();
   const docSnap = await getDoc(doc(db, "pomodoroLog", currentUser));
   const data = docSnap.exists() ? docSnap.data() : {};
@@ -143,6 +147,7 @@ async function getTodaySessionCount() {
 }
 
 async function updateLogDropdown() {
+  if (!currentUser) return;
   const docSnap = await getDoc(doc(db, "pomodoroLog", currentUser));
   const log = docSnap.exists() ? docSnap.data() : {};
   logDropdown.innerHTML = "";
@@ -174,6 +179,7 @@ stars.forEach(star => {
 });
 
 async function saveFocusRating(rating) {
+  if (!currentUser) return;
   const key = getTodayKey();
   const docRef = doc(db, "focusRatings", currentUser);
   const docSnap = await getDoc(docRef);
@@ -184,6 +190,7 @@ async function saveFocusRating(rating) {
 }
 
 async function updateFocusAverage() {
+  if (!currentUser) return;
   const key = getTodayKey();
   const docSnap = await getDoc(doc(db, "focusRatings", currentUser));
   const ratings = docSnap.exists() ? docSnap.data() : {};
@@ -230,11 +237,16 @@ if ("Notification" in window && Notification.permission !== "granted") {
   Notification.requestPermission();
 }
 
-(async () => {
-  updateDisplay();
-  sessionCount.textContent = await getTodaySessionCount();
-  updateGoalProgress();
-  await updateLogDropdown();
-  await updateFocusAverage();
-  checkForBadges(await getTodaySessionCount());
-})();
+onAuthStateChanged(auth, async (user) => {
+  if (user) {
+    currentUser = user.uid;
+    updateDisplay();
+    sessionCount.textContent = await getTodaySessionCount();
+    updateGoalProgress();
+    await updateLogDropdown();
+    await updateFocusAverage();
+    checkForBadges(await getTodaySessionCount());
+  } else {
+    console.log("Not logged in – Firestore features are disabled.");
+  }
+});

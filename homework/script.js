@@ -1,5 +1,6 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-app.js";
 import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-auth.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyDhHoP9RIyNBBx_2Pdc_uYMjinfdNe0rWI",
@@ -13,7 +14,8 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
-const currentUser = localStorage.getItem("currentUser") || "guest";
+const auth = getAuth(app);
+let currentUser = null;
 
 const form = document.getElementById("task-form");
 const todoCol = document.getElementById("todo");
@@ -136,6 +138,7 @@ function sortTasksByDate(column) {
 }
 
 async function saveTasks() {
+  if (!currentUser) return;
   const data = {
     todo: todoCol.innerHTML,
     progress: inProgressCol.innerHTML,
@@ -145,6 +148,7 @@ async function saveTasks() {
 }
 
 async function loadTasks() {
+  if (!currentUser) return;
   const docSnap = await getDoc(doc(db, "homework", currentUser));
   if (!docSnap.exists()) return;
   const data = docSnap.data();
@@ -218,4 +222,11 @@ exportBtn.addEventListener("click", () => {
   link.click();
 });
 
-loadTasks();
+onAuthStateChanged(auth, async (user) => {
+  if (user) {
+    currentUser = user.uid;
+    await loadTasks();
+  } else {
+    console.log("User not authenticated – Firestore operations disabled.");
+  }
+});
