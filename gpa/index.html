@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GPA Calculator</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="main-header">
+    <nav>
+      <a href="/">🏠 Home</a>
+      <a href="/pomodoro/index.html">⏱️ Pomodoro</a>
+      <a href="/homework/index.html">📚 Homework</a>
+      <a href="/gpa/index.html">📊 GPA Calculator</a>
+    </nav>
+  </header>
+
+  <section class="intro">
+    <h2>Welcome to the GPA Calculator</h2>
+    <p>This tool helps you calculate your unweighted and weighted GPA by entering your courses, grades, and credit hours.</p>
+    <ul>
+      <li>Enter letter grades (e.g., A, B+, C-) or percentage scores (e.g., 92%)</li>
+      <li>Credits help calculate your <strong>weighted GPA</strong> (optional)</li>
+      <li>Set a goal GPA and track your progress visually</li>
+      <li>Scroll down to use the "What If" calculator to see what you need on final exams</li>
+    </ul>
+  </section>
+
+  <section class="calculator">
+    <label for="goal-gpa"><strong>🎯 GPA Goal:</strong></label>
+    <input type="number" id="goal-gpa" step="0.1" min="0" max="4.0" placeholder="Set your goal (e.g., 3.5)" />
+
+    <form id="course-form">
+      <input type="text" id="course-name" placeholder="Course Name" required />
+      <input type="text" id="grade" placeholder="Grade (A, B, 90%, etc.)" required />
+      <input type="number" id="credits" placeholder="Credits (optional)" min="0" step="0.5" />
+      <button type="submit">Add Course</button>
+    </form>
+
+    <div class="course-list" id="course-list"></div>
+
+    <div class="results">
+      <p><strong>Unweighted GPA:</strong> <span id="unweighted-gpa">0.00</span></p>
+      <p><strong>Weighted GPA:</strong> <span id="weighted-gpa">0.00</span></p>
+      <div class="progress-wrapper">
+        <div class="progress-bar" id="goal-progress">0%</div>
+      </div>
+    </div>
+    <button class="clear-btn" id="clear-btn">Clear All</button>
+  </section>
+
+  <section class="what-if">
+    <h2>📘 What If - Final Exam Calculator</h2>
+    <p>Use this to calculate what you need on your final exam to achieve your desired course grade.</p>
+    <form id="what-if-form">
+      <input type="number" id="current-grade" placeholder="Current Grade (%)" step="0.1" min="0" max="100" required />
+      <input type="number" id="final-weight" placeholder="Final Exam Weight (%)" step="0.1" min="0" max="100" required />
+      <input type="number" id="target-grade" placeholder="Desired Course Grade (%)" step="0.1" min="0" max="100" required />
+      <button type="submit">Calculate</button>
+    </form>
+    <p id="what-if-result"></p>
+  </section>
+  <script type="module" src="script.js"></script>
+</body>
+</html>

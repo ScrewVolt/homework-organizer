@@ -11,10 +11,9 @@ body {
   
   .container {
     background: #ffffff;
-    padding: 2rem;
+    padding: 6rem;
     border-radius: 16px;
     box-shadow: 0 8px 24px rgba(0,0,0,0.06);
-    max-width: 600px;
     width: 100%;
   }
   
@@ -193,7 +192,7 @@ body {
   .main-header nav a {
     color: #f9fafb;
     text-decoration: none;
-    margin: 0 1rem;
+    margin: 1 1rem;
     font-weight: 500;
     font-size: 1rem;
   }
